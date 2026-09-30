@@ -3,7 +3,11 @@
 
 function sumTo(n) {
   // ✏️ your code here
-
+  if (n === 1) {
+    return 1;
+  }
+  
+  return n + sumTo(n - 1);
 }
 
 // See it work: remove the // from the next line...
