@@ -7,3 +7,5 @@ my-progress.md
 # OS junk
 .DS_Store
 Thumbs.db
+
+package-lock.json
