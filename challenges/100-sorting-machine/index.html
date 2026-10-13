@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Sorting Machine</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 560px;
+      margin: 50px auto;
+      padding: 0 20px;
+      background: #1e1e2e;
+      color: #eee;
+    }
+    h1 {
+      font-size: 1.5rem;
+    }
+    p {
+      color: #bbb;
+    }
+    #bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      height: 220px;
+      margin: 24px 0;
+      background: #2a2a3d;
+      border-radius: 10px;
+      padding: 14px;
+    }
+    .bar {
+      flex: 1;
+      background: #7c6cf0;
+      border-radius: 4px 4px 0 0;
+      transition: height 0.35s;
+    }
+    .bar.done {
+      background: #4ade80;
+    }
+    button {
+      font-size: 1.05rem;
+      padding: 10px 22px;
+      border: none;
+      border-radius: 8px;
+      background: #7c6cf0;
+      color: white;
+      cursor: pointer;
+      margin-right: 8px;
+    }
+    button:hover {
+      background: #9487f5;
+    }
+    #banner {
+      font-size: 1.15rem;
+      margin-top: 20px;
+      min-height: 1.6em;
+    }
+  </style>
+</head>
+<body>
+  <h1>🏆 The Sorting Machine</h1>
+  <p>These bars are a messy array. The buttons run <em>your</em>
+  <code>sortStep</code>, one pass at a time. Watch the tallest bar
+  bubble to the right.</p>
+
+  <div id="bars"></div>
+
+  <button id="step">One pass</button>
+  <button id="run">Run the machine</button>
+  <button id="shuffle">New mess</button>
+
+  <div id="banner"></div>
+
+  <script src="solution.js"></script>
+  <script>
+    const barsBox = document.getElementById("bars");
+    const banner = document.getElementById("banner");
+    let numbers = [];
+    let ticker = null;
+
+    function isSorted(arr) {
+      for (let i = 0; i < arr.length - 1; i++) {
+        if (arr[i] > arr[i + 1]) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function draw() {
+      barsBox.innerHTML = "";
+      let biggest = 1;
+      for (let i = 0; i < numbers.length; i++) {
+        if (numbers[i] > biggest) {
+          biggest = numbers[i];
+        }
+      }
+      for (let i = 0; i < numbers.length; i++) {
+        const bar = document.createElement("div");
+        bar.className = "bar" + (isSorted(numbers) ? " done" : "");
+        bar.style.height = `${(numbers[i] / biggest) * 100}%`;
+        bar.title = numbers[i];
+        barsBox.appendChild(bar);
+      }
+    }
+
+    function newMess() {
+      clearInterval(ticker);
+      numbers = [];
+      for (let i = 0; i < 14; i++) {
+        numbers.push(Math.floor(Math.random() * 95) + 5);
+      }
+      banner.textContent = "";
+      draw();
+    }
+
+    function onePass() {
+      if (typeof sortStep !== "function") {
+        banner.textContent = "Finish solution.js first!";
+        return;
+      }
+      sortStep(numbers);
+      draw();
+      if (isSorted(numbers)) {
+        clearInterval(ticker);
+        banner.textContent =
+          "✅ Sorted. Day 100 complete. You just rebuilt .sort() yourself. 🎓";
+      }
+    }
+
+    document.getElementById("step").addEventListener("click", onePass);
+    document.getElementById("run").addEventListener("click", () => {
+      clearInterval(ticker);
+      ticker = setInterval(onePass, 350);
+    });
+    document.getElementById("shuffle").addEventListener("click", newMess);
+
+    newMess();
+  </script>
+</body>
+</html>
